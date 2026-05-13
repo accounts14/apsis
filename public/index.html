@@ -1,0 +1,1889 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Penilaian 360° - PT Energi Nusantara</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --primary: #1D4ED8;
+            --primary-light: #EFF6FF;
+            --primary-mid: #BFDBFE;
+            --accent: #10B981;
+            --accent-light: #D1FAE5;
+            --danger: #EF4444;
+            --danger-light: #FEE2E2;
+            --warning: #F59E0B;
+            --warning-light: #FEF3C7;
+            --bg: #F1F5F9;
+            --sidebar-bg: #ffffff;
+            --card: #ffffff;
+            --text: #0F172A;
+            --text-muted: #64748B;
+            --text-light: #94A3B8;
+            --border: #E2E8F0;
+            --sidebar-width: 230px;
+            --header-height: 60px;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ===== LOGIN PAGE ===== */
+        #loginPage {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #F1F5F9;
+            position: relative;
+            overflow: hidden;
+        }
+        #loginPage::before {
+            content: '';
+            position: absolute;
+            top: -200px; left: -200px;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(29,78,216,0.06) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        #loginPage::after {
+            content: '';
+            position: absolute;
+            bottom: -150px; right: -150px;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(16,185,129,0.05) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .login-wrapper {
+            width: 100%;
+            max-width: 460px;
+            padding: 20px;
+            z-index: 1;
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .login-logo {
+            width: 52px; height: 52px;
+            background: var(--primary);
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 24px rgba(29,78,216,0.25);
+        }
+        .login-logo svg { width: 28px; height: 28px; fill: white; }
+        .login-header .brand { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; }
+        .login-header h1 { font-size: 28px; font-weight: 800; color: var(--text); }
+
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            padding: 36px;
+            box-shadow: 0 4px 40px rgba(0,0,0,0.08);
+            border: 1px solid var(--border);
+        }
+        .tab-switch {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: var(--bg);
+            border-radius: 10px;
+            padding: 4px;
+            margin-bottom: 28px;
+        }
+        .tab-switch button {
+            border: none;
+            background: none;
+            padding: 9px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tab-switch button.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+        }
+        .form-group { margin-bottom: 18px; }
+        .form-group label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .form-group label a { color: var(--primary); text-decoration: none; font-weight: 600; }
+        .input-wrap {
+            position: relative;
+        }
+        .input-wrap .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            width: 16px; height: 16px;
+        }
+        .input-wrap input {
+            width: 100%;
+            padding: 11px 14px 11px 42px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            background: #FAFAFA;
+            color: var(--text);
+            transition: all 0.2s;
+            outline: none;
+        }
+        .input-wrap input:focus {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(29,78,216,0.08);
+        }
+        .btn-login {
+            width: 100%;
+            padding: 13px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 8px;
+            box-shadow: 0 4px 16px rgba(29,78,216,0.3);
+        }
+        .btn-login:hover { background: #1e40af; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(29,78,216,0.35); }
+        .login-footer {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: var(--text-light);
+            text-transform: uppercase;
+        }
+        .login-badges {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .login-badge {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--text-light);
+        }
+        .login-badge::before {
+            content: '';
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--text-light);
+        }
+
+        /* ===== MAIN APP LAYOUT ===== */
+        #mainApp { display: none; min-height: 100vh; }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0; top: 0; bottom: 0;
+            width: var(--sidebar-width);
+            background: white;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 50;
+        }
+        .sidebar-brand {
+            padding: 20px 20px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .brand-icon {
+            width: 38px; height: 38px;
+            background: var(--primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .brand-icon svg { width: 20px; height: 20px; fill: white; }
+        .brand-text .name { font-size: 14px; font-weight: 800; color: var(--text); line-height: 1.2; }
+        .brand-text .sub { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-light); }
+
+        .sidebar-nav {
+            padding: 16px 12px;
+            flex: 1;
+            overflow-y: auto;
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.15s;
+            margin-bottom: 2px;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+        .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+        .nav-item:hover { background: var(--bg); color: var(--text); }
+        .nav-item.active { background: var(--primary-light); color: var(--primary); }
+        .nav-item.active svg { stroke: var(--primary); }
+
+        .sidebar-bottom {
+            padding: 12px;
+            border-top: 1px solid var(--border);
+        }
+        .nav-item.danger { color: var(--danger); }
+        .nav-item.danger:hover { background: var(--danger-light); }
+
+        /* Topbar */
+        .topbar {
+            position: fixed;
+            top: 0;
+            left: var(--sidebar-width);
+            right: 0;
+            height: var(--header-height);
+            background: white;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+            z-index: 40;
+        }
+        .topbar-nav {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .topbar-nav button {
+            padding: 7px 16px;
+            border: none;
+            background: none;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.15s;
+        }
+        .topbar-nav button:hover { color: var(--text); }
+        .topbar-nav button.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .search-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .search-box svg {
+            position: absolute;
+            left: 12px;
+            width: 15px; height: 15px;
+            color: var(--text-light);
+        }
+        .search-box input {
+            padding: 8px 14px 8px 36px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: inherit;
+            background: var(--bg);
+            color: var(--text);
+            outline: none;
+            width: 200px;
+            transition: all 0.2s;
+        }
+        .search-box input:focus { border-color: var(--primary); background: white; width: 240px; }
+        .user-avatar {
+            width: 36px; height: 36px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .user-name { font-size: 13px; font-weight: 700; color: var(--text); }
+        .btn-logout {
+            padding: 7px 14px;
+            background: none;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .btn-logout:hover { background: var(--danger-light); border-color: var(--danger); color: var(--danger); }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 28px;
+            min-height: calc(100vh - var(--header-height));
+        }
+
+        /* Page sections */
+        .page { display: none; }
+        .page.active { display: block; }
+
+        /* ===== COMMON COMPONENTS ===== */
+        .page-title-section { margin-bottom: 24px; }
+        .page-title-section .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+        .page-title-section h2 { font-size: 26px; font-weight: 800; color: var(--text); }
+        .page-title-section p { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+
+        .card {
+            background: var(--card);
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            padding: 24px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 9px 18px;
+            border-radius: 9px;
+            border: none;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: inherit;
+        }
+        .btn svg { width: 15px; height: 15px; }
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 2px 10px rgba(29,78,216,0.2); }
+        .btn-primary:hover { background: #1e40af; transform: translateY(-1px); }
+        .btn-success { background: var(--accent); color: white; box-shadow: 0 2px 10px rgba(16,185,129,0.2); }
+        .btn-success:hover { background: #059669; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-ghost { background: none; border: 1.5px solid var(--border); color: var(--text-muted); }
+        .btn-ghost:hover { background: var(--bg); color: var(--text); border-color: #CBD5E1; }
+        .btn-sm { padding: 6px 12px; font-size: 12px; }
+        .btn-icon { padding: 7px; border-radius: 8px; background: none; border: 1.5px solid var(--border); color: var(--text-muted); cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; }
+        .btn-icon:hover { background: var(--bg); color: var(--text); }
+        .btn-icon svg { width: 15px; height: 15px; }
+        .btn-icon.danger:hover { background: var(--danger-light); border-color: var(--danger); color: var(--danger); }
+
+        /* Tables */
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        thead th {
+            padding: 10px 16px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            border-bottom: 1.5px solid var(--border);
+            text-align: left;
+            background: var(--bg);
+        }
+        thead th:first-child { border-radius: 8px 0 0 8px; }
+        thead th:last-child { border-radius: 0 8px 8px 0; }
+        tbody td {
+            padding: 14px 16px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:hover td { background: #FAFBFC; }
+
+        .avatar-circle {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+        .karyawan-cell { display: flex; align-items: center; gap: 12px; }
+        .karyawan-cell .info .name { font-weight: 700; font-size: 14px; color: var(--text); }
+        .karyawan-cell .info .sub { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+
+        .nip-link { color: var(--primary); font-weight: 600; font-size: 13px; text-decoration: none; }
+        .nip-link:hover { text-decoration: underline; }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            background: var(--bg);
+            color: var(--text-muted);
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .badge-selesai { background: var(--accent-light); color: #065f46; }
+        .badge-belum { background: var(--danger-light); color: #991b1b; }
+        .badge-p1 { background: #dbeafe; color: #1e40af; }
+        .badge-p2 { background: #dcfce7; color: #166534; }
+        .badge-p3 { background: var(--warning-light); color: #92400e; }
+
+        /* Actions column */
+        .actions { display: flex; gap: 6px; align-items: center; }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 20px;
+        }
+        .pagination button {
+            width: 34px; height: 34px;
+            border: 1.5px solid var(--border);
+            background: white;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .pagination button.active { background: var(--primary); border-color: var(--primary); color: white; }
+        .pagination button:hover:not(.active) { background: var(--bg); color: var(--text); }
+        .pagination .dots { color: var(--text-light); font-size: 13px; padding: 0 4px; }
+
+        /* Inputs & Forms */
+        .field { margin-bottom: 18px; }
+        .field label { display: block; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+        .field input, .field select, .field textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 9px;
+            font-size: 14px;
+            font-family: inherit;
+            background: #FAFAFA;
+            color: var(--text);
+            outline: none;
+            transition: all 0.2s;
+        }
+        .field input:focus, .field select:focus, .field textarea:focus {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(29,78,216,0.08);
+        }
+        .field textarea { resize: vertical; }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15,23,42,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-box {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 540px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+        .modal-header {
+            padding: 22px 24px 18px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+        .modal-header .title { font-size: 17px; font-weight: 800; color: var(--text); }
+        .modal-header .subtitle { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+        .modal-header-icon {
+            width: 40px; height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        .modal-header-left { display: flex; align-items: flex-start; gap: 0; }
+        .modal-close {
+            width: 32px; height: 32px;
+            border: none;
+            background: var(--bg);
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+        .modal-close:hover { background: var(--border); color: var(--text); }
+        .modal-body { padding: 22px 24px; }
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        .nilai-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .nilai-item label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+        .nilai-input-wrap { position: relative; }
+        .nilai-input-wrap input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 9px;
+            font-size: 14px;
+            font-family: inherit;
+            background: #FAFAFA;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .nilai-input-wrap input:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(29,78,216,0.08); }
+        .nilai-input-wrap .target-hint {
+            position: absolute;
+            right: 12px; top: 50%;
+            transform: translateY(-50%);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-light);
+            pointer-events: none;
+        }
+
+        /* ===== DASHBOARD PAGE ===== */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+        .stat-card {
+            background: white;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .stat-icon {
+            width: 40px; height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .stat-icon svg { width: 20px; height: 20px; }
+        .stat-label { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+        .stat-value { font-size: 26px; font-weight: 800; color: var(--text); }
+        .stat-change { font-size: 12px; font-weight: 600; }
+        .stat-change.up { color: var(--accent); }
+        .stat-change.down { color: var(--danger); }
+
+        /* ===== MASTER DATA PAGE ===== */
+        .master-layout { display: grid; grid-template-columns: 280px 1fr; gap: 20px; }
+        .master-sidebar .panel {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .master-sidebar .panel h4 { font-size: 13px; font-weight: 800; margin-bottom: 14px; color: var(--text); }
+        .add-input-row { display: flex; gap: 8px; }
+        .add-input-row input {
+            flex: 1;
+            padding: 9px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: inherit;
+            outline: none;
+            background: var(--bg);
+            transition: all 0.2s;
+        }
+        .add-input-row input:focus { border-color: var(--primary); background: white; }
+        .add-input-row button {
+            width: 36px; height: 36px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+            flex-shrink: 0;
+        }
+        .add-input-row button:hover { background: #1e40af; }
+        .recent-changes { margin-top: 12px; }
+        .recent-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            background: var(--bg);
+        }
+        .recent-item-icon {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            background: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .recent-item-icon svg { width: 15px; height: 15px; stroke: var(--primary); }
+        .recent-item .ri-name { font-size: 13px; font-weight: 700; color: var(--text); }
+        .recent-item .ri-time { font-size: 11px; color: var(--text-light); margin-top: 1px; }
+
+        .table-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .table-search {
+            position: relative;
+            flex: 1;
+            max-width: 300px;
+        }
+        .table-search svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); width: 15px; height: 15px; color: var(--text-light); }
+        .table-search input {
+            width: 100%;
+            padding: 8px 12px 8px 34px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: inherit;
+            background: var(--bg);
+            outline: none;
+            transition: all 0.2s;
+        }
+        .table-search input:focus { border-color: var(--primary); background: white; }
+        .filter-select {
+            padding: 8px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: inherit;
+            background: var(--bg);
+            color: var(--text);
+            outline: none;
+            cursor: pointer;
+        }
+        .table-meta { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+
+        /* ===== HASIL AKHIR PAGE ===== */
+        .hasil-top { display: grid; grid-template-columns: 1fr 360px; gap: 20px; margin-bottom: 24px; }
+        .radar-card { padding: 24px; }
+        .radar-card h4 { font-size: 15px; font-weight: 800; color: var(--text); }
+        .radar-card .sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; margin-bottom: 16px; }
+        .radar-employee { display: inline-flex; padding: 4px 12px; background: var(--primary-light); color: var(--primary); border-radius: 20px; font-size: 12px; font-weight: 700; }
+        .performance-card {
+            background: var(--primary);
+            border-radius: 14px;
+            padding: 24px;
+            color: white;
+        }
+        .performance-card .icon-box {
+            width: 40px; height: 40px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px;
+        }
+        .performance-card .icon-box svg { width: 20px; height: 20px; stroke: white; }
+        .performance-card h4 { font-size: 16px; font-weight: 800; margin-bottom: 8px; }
+        .performance-card p { font-size: 13px; opacity: 0.85; line-height: 1.6; margin-bottom: 20px; }
+        .perf-stats { display: flex; flex-direction: column; gap: 10px; }
+        .perf-stat-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.15); }
+        .perf-stat-row .label { font-size: 11px; font-weight: 600; opacity: 0.7; letter-spacing: 0.06em; text-transform: uppercase; }
+        .perf-stat-row .value { font-size: 15px; font-weight: 800; }
+        .nilai-kpi-cell { display: flex; flex-direction: column; gap: 3px; }
+        .nilai-kpi-cell .val { font-size: 15px; font-weight: 800; }
+        .nilai-kpi-cell .edit-link { font-size: 11px; color: var(--primary); cursor: pointer; display: flex; align-items: center; gap: 3px; font-weight: 600; }
+        .nilai-akhir-big { font-size: 18px; font-weight: 800; color: var(--primary); }
+
+        /* ===== IDP PAGE ===== */
+        .status-chip { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .status-planned { background: var(--warning-light); color: #92400e; }
+        .status-running { background: var(--primary-light); color: var(--primary); }
+        .status-done { background: var(--accent-light); color: #065f46; }
+
+        /* ===== PENILAIAN PAGE ===== */
+        .section-box {
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+        .section-box.blue-bg { background: #EFF6FF; border-color: #BFDBFE; }
+        .section-box.green-bg { background: #F0FDF4; border-color: #BBF7D0; }
+        .section-box h4 { font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 14px; }
+
+        /* colors for avatars */
+        .c1 { background: #DBEAFE; color: #1E40AF; }
+        .c2 { background: #FCE7F3; color: #9D174D; }
+        .c3 { background: #D1FAE5; color: #065F46; }
+        .c4 { background: #FEF3C7; color: #92400E; }
+        .c5 { background: #EDE9FE; color: #4C1D95; }
+    </style>
+</head>
+<body>
+
+<!-- ========== LOGIN PAGE ========== -->
+<div id="loginPage">
+    <div class="login-wrapper">
+        <div class="login-header">
+            <div class="login-logo">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 2L4.09 12.5H12L11 22l8.91-10.5H12L13 2z"/></svg>
+            </div>
+            <div class="brand">PT Energi Nusantara</div>
+            <h1>Sistem Penilaian 360°</h1>
+        </div>
+        <div class="login-card">
+            <div class="tab-switch">
+                <button class="active" id="tabLoginBtn" onclick="switchTab('login')">Login</button>
+                <button id="tabRegBtn" onclick="switchTab('register')">Register</button>
+            </div>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Username</label>
+                    <div class="input-wrap">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        <input type="text" id="loginUser" placeholder="Masukkan username anda" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Password <a href="#">Lupa Password?</a></label>
+                    <div class="input-wrap">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        <input type="password" id="loginPass" placeholder="Masukkan password anda" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn-login">Masuk</button>
+            </form>
+            <form id="registerForm" style="display:none" onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label>Nama Lengkap</label>
+                    <div class="input-wrap">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        <input type="text" id="regName" placeholder="Nama lengkap anda">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Username</label>
+                    <div class="input-wrap">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        <input type="text" id="regUser" placeholder="Username" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="input-wrap">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        <input type="password" id="regPass" placeholder="Password" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn-login">Daftar</button>
+            </form>
+            <div class="login-footer">Assessment Dashboard V2.4.0</div>
+        </div>
+        <div class="login-badges">
+            <span class="login-badge">Secure Protocol</span>
+            <span class="login-badge">Internal Cloud</span>
+            <span class="login-badge">Biometric Ready</span>
+        </div>
+    </div>
+</div>
+
+<!-- ========== MAIN APP ========== -->
+<div id="mainApp">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-logo">
+                <div class="brand-icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 2L4.09 12.5H12L11 22l8.91-10.5H12L13 2z"/></svg>
+                </div>
+                <div class="brand-text">
+                    <div class="name">Energi Nusantara</div>
+                    <div class="sub">Internal Assessment</div>
+                </div>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <button class="nav-item active" onclick="showPage('dashboard', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                Dashboard
+            </button>
+            <button class="nav-item" onclick="showPage('karyawan', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Master Data
+            </button>
+            <button class="nav-item" onclick="showPage('penilaian', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                Penilaian
+            </button>
+            <button class="nav-item" onclick="showPage('hasil', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                Hasil Akhir
+            </button>
+            <button class="nav-item" onclick="showPage('idp', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                IDP
+            </button>
+        </nav>
+        <div class="sidebar-bottom">
+            <button class="nav-item" onclick="alert('Settings')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M12 2v2M4.93 4.93l1.41 1.41M2 12h2M4.93 19.07l1.41-1.41M12 20v2M19.07 19.07l-1.41-1.41M20 12h2"/></svg>
+                Settings
+            </button>
+            <button class="nav-item danger" onclick="logout()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- Topbar -->
+    <header class="topbar">
+        <nav class="topbar-nav">
+            <button class="active" id="topDashboard" onclick="showPage('dashboard', null, 'topDashboard')">Dashboard</button>
+            <button id="topKaryawan" onclick="showPage('karyawan', null, 'topKaryawan')">Master Data</button>
+            <button id="topPenilaian" onclick="showPage('penilaian', null, 'topPenilaian')">Penilaian</button>
+            <button id="topHasil" onclick="showPage('hasil', null, 'topHasil')">Hasil Akhir</button>
+            <button id="topIdp" onclick="showPage('idp', null, 'topIdp')">IDP</button>
+        </nav>
+        <div class="topbar-right">
+            <div class="search-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" placeholder="Cari data...">
+            </div>
+            <div class="user-name" id="namaUser"></div>
+            <div class="user-avatar" id="userAvatarTop">A</div>
+            <button class="btn-logout" onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- PAGE: DASHBOARD -->
+        <div id="pageDashboard" class="page active">
+            <div class="page-title-section">
+                <div class="eyebrow">Overview</div>
+                <h2>Dashboard</h2>
+                <p>Ringkasan sistem penilaian 360° PT Energi Nusantara</p>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:#EFF6FF">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <div>
+                        <div class="stat-label">Total Karyawan</div>
+                        <div class="stat-value">1,248</div>
+                        <div class="stat-change up">+12 bulan ini</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:#D1FAE5">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                    </div>
+                    <div>
+                        <div class="stat-label">Penilaian Selesai</div>
+                        <div class="stat-value">85%</div>
+                        <div class="stat-change up">Target 90%</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:#FEF3C7">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </div>
+                    <div>
+                        <div class="stat-label">Rata-rata AKHLAK</div>
+                        <div class="stat-value">88.5</div>
+                        <div class="stat-change up">+2.3 dari periode lalu</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:#FCE7F3">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#EC4899" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                    </div>
+                    <div>
+                        <div class="stat-label">Program IDP Aktif</div>
+                        <div class="stat-value">34</div>
+                        <div class="stat-change down">8 belum dimulai</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card" style="padding: 20px;">
+                <p style="color: var(--text-muted); font-size: 14px;">Pilih periode di halaman <strong>Hasil Akhir</strong> untuk melihat visualisasi data lengkap.</p>
+            </div>
+        </div>
+
+        <!-- PAGE: MASTER DATA -->
+        <div id="pageKaryawan" class="page">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px;">
+                <div class="page-title-section" style="margin-bottom:0">
+                    <div class="eyebrow">Administrasi Sistem</div>
+                    <h2>Master Data Karyawan</h2>
+                </div>
+                <button class="btn btn-primary" onclick="openModal('modalKaryawan')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Tambah Karyawan
+                </button>
+            </div>
+
+            <div class="master-layout">
+                <!-- Left Panel -->
+                <div class="master-sidebar">
+                    <div class="panel">
+                        <h4>Divisi Baru</h4>
+                        <div class="add-input-row">
+                            <input type="text" id="inputDivisi" placeholder="Nama Divisi...">
+                            <button onclick="addMaster('divisi', 'inputDivisi')">+</button>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <h4>Jabatan Baru</h4>
+                        <div class="add-input-row">
+                            <input type="text" id="inputJabatan" placeholder="Nama Jabatan...">
+                            <button onclick="addMaster('jabatan', 'inputJabatan')">+</button>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <h4 style="font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted);">Recent Structure Changes</h4>
+                        <div class="recent-item">
+                            <div class="recent-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/></svg>
+                            </div>
+                            <div>
+                                <div class="ri-name">Divisi Komersial</div>
+                                <div class="ri-time">Added 2 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="recent-item">
+                            <div class="recent-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </div>
+                            <div>
+                                <div class="ri-name">Senior Technical Expert</div>
+                                <div class="ri-time">Added Yesterday</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Table -->
+                <div class="card" style="padding:20px;">
+                    <div class="table-header">
+                        <div class="table-search">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <input type="text" placeholder="Cari NIP atau Nama...">
+                        </div>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <span style="font-size:12px; color:var(--text-muted); font-weight:600;">Filter Divisi:</span>
+                            <select class="filter-select">
+                                <option>Semua Divisi</option>
+                            </select>
+                        </div>
+                        <div class="table-meta">Menampilkan 1-10 dari 142 Karyawan</div>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>NIP</th>
+                                    <th>Nama</th>
+                                    <th>Divisi</th>
+                                    <th>Jabatan</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="karyawanTable">
+                                <tr>
+                                    <td><a href="#" class="nip-link">EN-2023-0104</a></td>
+                                    <td>
+                                        <div class="karyawan-cell">
+                                            <div class="avatar-circle c1">AA</div>
+                                            <div class="info"><div class="name">Aditya Arisandy</div></div>
+                                        </div>
+                                    </td>
+                                    <td><span class="tag">Operasional</span></td>
+                                    <td>Technical Lead</td>
+                                    <td><div class="actions">
+                                        <button class="btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                                        <button class="btn-icon danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+                                    </div></td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#" class="nip-link">EN-2021-0892</a></td>
+                                    <td>
+                                        <div class="karyawan-cell">
+                                            <div class="avatar-circle c2">SP</div>
+                                            <div class="info"><div class="name">Siska Putri</div></div>
+                                        </div>
+                                    </td>
+                                    <td><span class="tag">Keuangan</span></td>
+                                    <td>Finance Controller</td>
+                                    <td><div class="actions">
+                                        <button class="btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                                        <button class="btn-icon danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+                                    </div></td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#" class="nip-link">EN-2022-1201</a></td>
+                                    <td>
+                                        <div class="karyawan-cell">
+                                            <div class="avatar-circle c3">BK</div>
+                                            <div class="info"><div class="name">Bambang Kusuma</div></div>
+                                        </div>
+                                    </td>
+                                    <td><span class="tag">Teknik</span></td>
+                                    <td>Senior Engineer</td>
+                                    <td><div class="actions">
+                                        <button class="btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                                        <button class="btn-icon danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+                                    </div></td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#" class="nip-link">EN-2023-0445</a></td>
+                                    <td>
+                                        <div class="karyawan-cell">
+                                            <div class="avatar-circle c4">DM</div>
+                                            <div class="info"><div class="name">Diana Maharani</div></div>
+                                        </div>
+                                    </td>
+                                    <td><span class="tag">SDM</span></td>
+                                    <td>HR Specialist</td>
+                                    <td><div class="actions">
+                                        <button class="btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                                        <button class="btn-icon danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+                                    </div></td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#" class="nip-link">EN-2020-0512</a></td>
+                                    <td>
+                                        <div class="karyawan-cell">
+                                            <div class="avatar-circle c5">RW</div>
+                                            <div class="info"><div class="name">Raka Wijaya</div></div>
+                                        </div>
+                                    </td>
+                                    <td><span class="tag">Operasional</span></td>
+                                    <td>Site Manager</td>
+                                    <td><div class="actions">
+                                        <button class="btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                                        <button class="btn-icon danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+                                    </div></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
+                        <div style="font-size:12px; color:var(--text-muted);">Menampilkan 1-5 dari 142 data</div>
+                        <div class="pagination">
+                            <button>‹</button>
+                            <button class="active">1</button>
+                            <button>2</button>
+                            <button>3</button>
+                            <span class="dots">…</span>
+                            <button>15</button>
+                            <button>›</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE: PENILAIAN -->
+        <div id="pagePenilaian" class="page">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px;">
+                <div class="page-title-section" style="margin-bottom:0">
+                    <div class="eyebrow">Setup</div>
+                    <h2>Penilaian</h2>
+                </div>
+            </div>
+            <div class="card">
+                <div class="section-box blue-bg">
+                    <h4>1. Buat Periode Penilaian</h4>
+                    <div style="display:flex; gap:10px; margin-bottom:14px;">
+                        <input type="text" id="namaPeriode" placeholder="Contoh: Semester 1 2025" style="flex:1; padding:9px 14px; border:1.5px solid #BFDBFE; border-radius:9px; font-size:14px; font-family:inherit; outline:none; background:white;">
+                        <button class="btn btn-success btn-sm" onclick="addPeriode()">Tambah Periode</button>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <label style="font-size:13px; font-weight:700; color:var(--text-muted); white-space:nowrap;">Pilih Periode:</label>
+                        <select id="selectPeriode" onchange="loadMapping()" style="flex:1; max-width:300px; padding:9px 12px; border:1.5px solid #BFDBFE; border-radius:9px; font-size:13px; font-family:inherit; outline:none; background:white;"></select>
+                    </div>
+                </div>
+
+                <div class="section-box green-bg">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                        <h4 style="margin-bottom:0">2. Mapping Penilai</h4>
+                        <button class="btn btn-primary btn-sm" onclick="openModal('modalMapping')">+ Tambah Mapping</button>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Karyawan Dinilai</th><th>Penilai</th><th>Tipe</th><th>Status</th><th>Aksi</th></tr></thead>
+                            <tbody id="mappingTable">
+                                <tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:24px;">Pilih periode untuk melihat data mapping</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE: HASIL AKHIR -->
+        <div id="pageHasil" class="page">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
+                <div class="page-title-section" style="margin-bottom:0">
+                    <div class="eyebrow">Laporan</div>
+                    <h2>Rekaputilasi Hasil Akhir</h2>
+                    <p>Laporan performa dan nilai budaya AKHLAK karyawan periode berjalan.</p>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div>
+                        <div style="font-size:11px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px;">Pilih Periode</div>
+                        <select id="filterHasilPeriode" onchange="loadHasil()" style="padding:9px 14px; border:1.5px solid var(--border); border-radius:9px; font-size:13px; font-family:inherit; outline:none; background:white; min-width:200px;">
+                            <option value="">Pilih Periode</option>
+                        </select>
+                    </div>
+                    <div style="margin-top:17px;">
+                        <button class="btn btn-success" onclick="calculateResult()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                            Generate Hasil
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hasil-top">
+                <div class="card radar-card">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px;">
+                        <div>
+                            <h4>Analisis Radar AKHLAK</h4>
+                            <div class="sub">Rata-rata kompetensi per kategori (Sampel Terpilih)</div>
+                        </div>
+                        <span class="radar-employee">A. Pratama Putra</span>
+                    </div>
+                    <canvas id="radarChart" style="max-height:260px;"></canvas>
+                </div>
+                <div class="performance-card">
+                    <div class="icon-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    </div>
+                    <h4>Ringkasan Performa</h4>
+                    <p>Secara keseluruhan, 85% karyawan telah mencapai target KPI di atas 90 poin. Fokus utama periode berikutnya adalah penguatan nilai 'Adaptif' dalam budaya AKHLAK.</p>
+                    <div class="perf-stats">
+                        <div class="perf-stat-row">
+                            <div class="label">Nilai Tertinggi</div>
+                            <div class="value">Amanah (94)</div>
+                        </div>
+                        <div class="perf-stat-row">
+                            <div class="label">Nilai Terendah</div>
+                            <div class="value">Adaptif (72)</div>
+                        </div>
+                        <div class="perf-stat-row">
+                            <div class="label">Total Peserta</div>
+                            <div class="value">1,248 Orang</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="padding:20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                    <h4 style="font-size:15px; font-weight:800;">Daftar Hasil Penilaian</h4>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="14" y2="12"/><line x1="4" y1="18" x2="10" y2="18"/></svg></button>
+                        <button class="btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nama Karyawan</th>
+                            <th>Nilai KPI</th>
+                            <th>Nilai AKHLAK (Avg)</th>
+                            <th>Nilai Akhir</th>
+                            <th>Kategori</th>
+                        </tr>
+                    </thead>
+                    <tbody id="hasilTable">
+                        <tr>
+                            <td>
+                                <div class="karyawan-cell">
+                                    <div class="avatar-circle c1">AP</div>
+                                    <div class="info">
+                                        <div class="name">A. Pratama Putra</div>
+                                        <div class="sub">Assistant Manager • Marketing</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="nilai-kpi-cell">
+                                    <div class="val">92.40</div>
+                                    <div class="edit-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit KPI</div>
+                                </div>
+                            </td>
+                            <td>88.50</td>
+                            <td><span class="nilai-akhir-big">90.45</span></td>
+                            <td><span class="badge badge-p1">P1</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="karyawan-cell">
+                                    <div class="avatar-circle c2">SR</div>
+                                    <div class="info">
+                                        <div class="name">Siti Rahmawati</div>
+                                        <div class="sub">Senior Specialist • Finance</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="nilai-kpi-cell">
+                                    <div class="val">85.00</div>
+                                    <div class="edit-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit KPI</div>
+                                </div>
+                            </td>
+                            <td>90.10</td>
+                            <td><span class="nilai-akhir-big">87.55</span></td>
+                            <td><span class="badge badge-p2">P2</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="karyawan-cell">
+                                    <div class="avatar-circle c3">BN</div>
+                                    <div class="info">
+                                        <div class="name">Budi Nugraha</div>
+                                        <div class="sub">Officer • Operations</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="nilai-kpi-cell">
+                                    <div class="val">78.20</div>
+                                    <div class="edit-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit KPI</div>
+                                </div>
+                            </td>
+                            <td>82.40</td>
+                            <td><span class="nilai-akhir-big">80.30</span></td>
+                            <td><span class="badge badge-p3">P3</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
+                    <div style="font-size:12px; color:var(--text-muted);">Menampilkan 1-3 dari 1,248 data</div>
+                    <div class="pagination">
+                        <button>‹</button>
+                        <button class="active">1</button>
+                        <button>2</button>
+                        <button>3</button>
+                        <button>›</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE: IDP -->
+        <div id="pageIdp" class="page">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px;">
+                <div class="page-title-section" style="margin-bottom:0">
+                    <div class="eyebrow">Pengembangan</div>
+                    <h2>Individual Development Plan</h2>
+                    <p>Rencana pengembangan individu karyawan.</p>
+                </div>
+                <button class="btn btn-primary" onclick="openModal('modalIdp')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Tambah IDP
+                </button>
+            </div>
+            <div class="card" style="padding:20px;">
+                <table>
+                    <thead><tr><th>Nama</th><th>Program Pengembangan</th><th>Status</th><th>Aksi</th></tr></thead>
+                    <tbody id="idpTable">
+                        <tr>
+                            <td><div class="karyawan-cell"><div class="avatar-circle c1">AP</div><div class="info"><div class="name">A. Pratama Putra</div></div></div></td>
+                            <td>Pelatihan Leadership & Strategic Management</td>
+                            <td><span class="status-chip status-running">Berlangsung</span></td>
+                            <td><div class="actions">
+                                <button class="btn btn-ghost btn-sm">Start</button>
+                                <button class="btn btn-success btn-sm">Done</button>
+                            </div></td>
+                        </tr>
+                        <tr>
+                            <td><div class="karyawan-cell"><div class="avatar-circle c2">SR</div><div class="info"><div class="name">Siti Rahmawati</div></div></div></td>
+                            <td>Rotasi Jabatan ke Divisi Keuangan</td>
+                            <td><span class="status-chip status-planned">Direncanakan</span></td>
+                            <td><div class="actions">
+                                <button class="btn btn-ghost btn-sm">Start</button>
+                                <button class="btn btn-success btn-sm">Done</button>
+                            </div></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<!-- ========== MODALS ========== -->
+
+<!-- Modal Karyawan -->
+<div id="modalKaryawan" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-header">
+            <div>
+                <div class="title">Tambah Karyawan</div>
+                <div class="subtitle">Isi data lengkap karyawan baru</div>
+            </div>
+            <button class="modal-close" onclick="closeModal('modalKaryawan')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0 16px;">
+                <div class="field"><label>NIP</label><input type="text" id="kryNip" placeholder="EN-2024-0001"></div>
+                <div class="field"><label>Nama Lengkap</label><input type="text" id="kryNama" placeholder="Nama karyawan"></div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0 16px;">
+                <div class="field"><label>Divisi</label><select id="kryDivisi"><option value="">Pilih Divisi</option></select></div>
+                <div class="field"><label>Jabatan</label><select id="kryJabatan"><option value="">Pilih Jabatan</option></select></div>
+            </div>
+            <div class="field"><label>Status</label><select id="kryStatus"><option>Aktif</option><option>Tidak Aktif</option></select></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="closeModal('modalKaryawan')">Batal</button>
+            <button class="btn btn-primary" onclick="saveKaryawan()">Simpan Karyawan</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Mapping -->
+<div id="modalMapping" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-header">
+            <div>
+                <div class="title">Tambah Mapping Penilai</div>
+                <div class="subtitle">Atur relasi karyawan dan penilai</div>
+            </div>
+            <button class="modal-close" onclick="closeModal('modalMapping')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="field"><label>Karyawan Dinilai</label><select id="mapDinilai"><option value="">Pilih karyawan</option></select></div>
+            <div class="field"><label>Penilai</label><select id="mapPenilai"><option value="">Pilih penilai</option></select></div>
+            <div class="field"><label>Tipe Penilai</label>
+                <select id="mapTipe">
+                    <option value="Atasan">Atasan (40%)</option>
+                    <option value="Rekan">Rekan (20%)</option>
+                    <option value="Bawahan">Bawahan (30%)</option>
+                    <option value="Self">Self (10%)</option>
+                </select>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="closeModal('modalMapping')">Batal</button>
+            <button class="btn btn-primary" onclick="saveMapping()">Simpan Mapping</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Input Nilai AKHLAK -->
+<div id="modalNilai" class="modal-overlay">
+    <div class="modal-box" style="max-width:600px;">
+        <div class="modal-header" style="background:var(--primary); border-radius:16px 16px 0 0; padding:22px 24px;">
+            <div>
+                <div class="title" style="color:white;">Input Nilai: AKHLAK</div>
+                <div class="subtitle" style="color:rgba(255,255,255,0.7);">CORE VALUES ASSESSMENT</div>
+            </div>
+            <button class="modal-close" onclick="closeModal('modalNilai')" style="background:rgba(255,255,255,0.15); color:white;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="idMappingNilai">
+            <p id="infoPenilaian" style="font-size:13px; color:var(--text-muted); margin-bottom:20px;"></p>
+            <div class="nilai-grid">
+                <div class="nilai-item">
+                    <label>Amanah</label>
+                    <div class="nilai-input-wrap"><input type="number" id="nilAmanah" min="1" max="5" placeholder="Skala 1-5"><span class="target-hint">Target: 4.0</span></div>
+                </div>
+                <div class="nilai-item">
+                    <label>Kompeten</label>
+                    <div class="nilai-input-wrap"><input type="number" id="nilKompeten" min="1" max="5" placeholder="Skala 1-5"><span class="target-hint">Target: 4.5</span></div>
+                </div>
+                <div class="nilai-item">
+                    <label>Harmonis</label>
+                    <div class="nilai-input-wrap"><input type="number" id="nilHarmonis" min="1" max="5" placeholder="Skala 1-5"><span class="target-hint">Target: 4.0</span></div>
+                </div>
+                <div class="nilai-item">
+                    <label>Loyal</label>
+                    <div class="nilai-input-wrap"><input type="number" id="nilLoyal" min="1" max="5" placeholder="Skala 1-5"><span class="target-hint">Target: 5.0</span></div>
+                </div>
+                <div class="nilai-item">
+                    <label>Adaptif</label>
+                    <div class="nilai-input-wrap"><input type="number" id="nilAdaptif" min="1" max="5" placeholder="Skala 1-5"><span class="target-hint">Target: 4.0</span></div>
+                </div>
+                <div class="nilai-item">
+                    <label>Kolaboratif</label>
+                    <div class="nilai-input-wrap"><input type="number" id="nilKolaboratif" min="1" max="5" placeholder="Skala 1-5"><span class="target-hint">Target: 4.5</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="closeModal('modalNilai')">Batal</button>
+            <button class="btn btn-success" onclick="submitNilai()">Simpan Nilai</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal KPI -->
+<div id="modalKPI" class="modal-overlay">
+    <div class="modal-box" style="max-width:420px;">
+        <div class="modal-header">
+            <div>
+                <div class="title">Input Nilai KPI</div>
+                <div class="subtitle">Nilai KPI skala 0-100</div>
+            </div>
+            <button class="modal-close" onclick="closeModal('modalKPI')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="kpiIdKaryawan">
+            <input type="hidden" id="kpiIdPeriode">
+            <p id="infoKPI" style="font-size:13px; color:var(--text-muted); margin-bottom:16px;"></p>
+            <div class="field"><label>Nilai KPI (0-100)</label><input type="number" id="kpiValue" min="0" max="100" placeholder="Contoh: 85"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="closeModal('modalKPI')">Batal</button>
+            <button class="btn btn-success" onclick="saveKPI()">Simpan KPI</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal IDP -->
+<div id="modalIdp" class="modal-overlay">
+    <div class="modal-box" style="max-width:480px;">
+        <div class="modal-header">
+            <div>
+                <div class="title">Tambah IDP Karyawan</div>
+                <div class="subtitle">Individual Development Plan</div>
+            </div>
+            <button class="modal-close" onclick="closeModal('modalIdp')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="field"><label>Pilih Karyawan</label><select id="idpKaryawan"><option value="">Pilih karyawan</option></select></div>
+            <div class="field"><label>Program Pengembangan</label><textarea id="idpProgram" rows="4" placeholder="Contoh: Pelatihan Leadership, Rotasi Jabatan, dll"></textarea></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="closeModal('modalIdp')">Batal</button>
+            <button class="btn btn-primary" onclick="saveIdp()">Simpan IDP</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API = 'http://localhost:3000/api';
+    let currentPeriode = null;
+    let radarChart = null;
+
+    // PAGE NAV
+    function showPage(page, sidebarBtn, topBtnId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('page' + page.charAt(0).toUpperCase() + page.slice(1)).classList.add('active');
+        
+        // Sidebar
+        if(sidebarBtn) {
+            document.querySelectorAll('.sidebar .nav-item').forEach(b => b.classList.remove('active'));
+            sidebarBtn.classList.add('active');
+        }
+        // Topbar
+        document.querySelectorAll('.topbar-nav button').forEach(b => b.classList.remove('active'));
+        const topMap = { dashboard:'topDashboard', karyawan:'topKaryawan', penilaian:'topPenilaian', hasil:'topHasil', idp:'topIdp' };
+        const tgt = topBtnId || topMap[page];
+        if(tgt) document.getElementById(tgt)?.classList.add('active');
+
+        // Sync sidebar active
+        const sidebarMap = { dashboard:0, karyawan:1, penilaian:2, hasil:3, idp:4 };
+        if(!sidebarBtn) {
+            const items = document.querySelectorAll('.sidebar .nav-item');
+            items.forEach(b => b.classList.remove('active'));
+            if(items[sidebarMap[page]]) items[sidebarMap[page]].classList.add('active');
+        }
+    }
+
+    // AUTH
+    function switchTab(tab) {
+        document.getElementById('tabLoginBtn').classList.toggle('active', tab==='login');
+        document.getElementById('tabRegBtn').classList.toggle('active', tab==='register');
+        document.getElementById('loginForm').style.display = tab==='login' ? 'block' : 'none';
+        document.getElementById('registerForm').style.display = tab==='register' ? 'block' : 'none';
+    }
+    async function handleRegister(e) {
+        e.preventDefault();
+        const data = { nama_lengkap: document.getElementById('regName').value, username: document.getElementById('regUser').value, password: document.getElementById('regPass').value };
+        try {
+            const res = await fetch(API + '/auth/register', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) });
+            const json = await res.json(); alert(json.message); if(res.ok) switchTab('login');
+        } catch(err) { alert('Server tidak tersedia. Mode demo aktif.'); }
+    }
+    async function handleLogin(e) {
+        e.preventDefault();
+        const username = document.getElementById('loginUser').value;
+        const password = document.getElementById('loginPass').value;
+        try {
+            const res = await fetch(API + '/auth/login', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username, password}) });
+            const json = await res.json();
+            if(res.ok) { localStorage.setItem('user', JSON.stringify(json.user)); showMainApp(); }
+            else { alert(json.message); }
+        } catch(err) {
+            // Demo mode - login without backend
+            const demoUser = { username, nama: username === 'admin' ? 'Admin HR' : username };
+            localStorage.setItem('user', JSON.stringify(demoUser));
+            showMainApp();
+        }
+    }
+    function logout() { localStorage.removeItem('user'); location.reload(); }
+    function showMainApp() {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if(user) {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+            const nama = user.nama || user.username || 'User';
+            document.getElementById('namaUser').innerText = nama;
+            const initials = nama.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+            document.getElementById('userAvatarTop').innerText = initials;
+            initApp();
+            initRadarChart();
+        }
+    }
+
+    // INIT RADAR
+    function initRadarChart() {
+        const ctx = document.getElementById('radarChart')?.getContext('2d');
+        if(!ctx) return;
+        if(radarChart) radarChart.destroy();
+        radarChart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['Amanah', 'Kompeten', 'Harmonis', 'Loyal', 'Adaptif', 'Kolaboratif'],
+                datasets: [{
+                    label: 'A. Pratama Putra',
+                    data: [94, 88, 86, 90, 72, 85],
+                    backgroundColor: 'rgba(29,78,216,0.12)',
+                    borderColor: 'rgba(29,78,216,0.9)',
+                    pointBackgroundColor: 'rgba(29,78,216,1)',
+                    pointRadius: 5,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: { r: { beginAtZero: true, max: 100, ticks: { font:{size:10}, stepSize: 20 }, pointLabels: { font:{size:11, weight:'600'} } } },
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    // MASTER & KARYAWAN
+    async function loadMaster() {
+        try {
+            const div = await fetch(API + '/master/divisi').then(r=>r.json());
+            const jab = await fetch(API + '/master/jabatan').then(r=>r.json());
+            const kry = await fetch(API + '/karyawan').then(r=>r.json());
+            const optDiv = '<option value="">Pilih Divisi</option>' + div.map(d=>`<option value="${d.id}">${d.nama_divisi}</option>`).join('');
+            const optJab = '<option value="">Pilih Jabatan</option>' + jab.map(j=>`<option value="${j.id}">${j.nama_jabatan}</option>`).join('');
+            const optKry = '<option value="">Pilih Karyawan</option>' + kry.map(k=>`<option value="${k.id}">${k.nama_lengkap}</option>`).join('');
+            document.getElementById('kryDivisi').innerHTML = optDiv;
+            document.getElementById('kryJabatan').innerHTML = optJab;
+            document.getElementById('mapDinilai').innerHTML = optKry;
+            document.getElementById('mapPenilai').innerHTML = optKry;
+            document.getElementById('idpKaryawan').innerHTML = optKry;
+        } catch(e) { console.log('Backend not available, using demo data'); }
+    }
+    async function addMaster(type, inputId) {
+        const val = document.getElementById(inputId).value; if(!val) return;
+        try {
+            await fetch(API + '/master/' + type, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({['nama_'+type]: val}) });
+            document.getElementById(inputId).value = ''; loadMaster(); alert('Berhasil ditambahkan');
+        } catch(e) { alert('Berhasil ditambahkan (mode demo)'); document.getElementById(inputId).value = ''; }
+    }
+    async function loadKaryawan() {
+        try {
+            const data = await fetch(API + '/karyawan').then(r=>r.json());
+            const colors = ['c1','c2','c3','c4','c5'];
+            document.getElementById('karyawanTable').innerHTML = data.map((k,i) => {
+                const init = k.nama_lengkap.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+                return `<tr>
+                    <td><a href="#" class="nip-link">${k.nip}</a></td>
+                    <td><div class="karyawan-cell"><div class="avatar-circle ${colors[i%5]}">${init}</div><div class="info"><div class="name">${k.nama_lengkap}</div></div></div></td>
+                    <td><span class="tag">${k.nama_divisi||'-'}</span></td>
+                    <td>${k.nama_jabatan||'-'}</td>
+                    <td><div class="actions">
+                        <button class="btn-icon" onclick="editKaryawan(${k.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                        <button class="btn-icon danger" onclick="deleteKaryawan(${k.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
+                    </div></td>
+                </tr>`;
+            }).join('');
+        } catch(e) { console.log('Demo mode'); }
+    }
+    function editKaryawan(id) { alert('Edit karyawan ID: ' + id); }
+    async function saveKaryawan() {
+        const data = { nip: document.getElementById('kryNip').value, nama_lengkap: document.getElementById('kryNama').value, id_divisi: document.getElementById('kryDivisi').value, id_jabatan: document.getElementById('kryJabatan').value, status: document.getElementById('kryStatus').value };
+        try {
+            await fetch(API + '/karyawan', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) });
+            closeModal('modalKaryawan'); loadKaryawan(); loadMaster();
+        } catch(e) { closeModal('modalKaryawan'); alert('Disimpan (mode demo)'); }
+    }
+    async function deleteKaryawan(id) {
+        if(!confirm('Hapus karyawan ini?')) return;
+        try { await fetch(API + '/karyawan/' + id, {method:'DELETE'}); loadKaryawan(); }
+        catch(e) { alert('Dihapus (mode demo)'); }
+    }
+
+    // PENILAIAN
+    async function loadPeriode() {
+        try {
+            const data = await fetch(API + '/penilaian/periode').then(r=>r.json());
+            const opts = data.map(p=>`<option value="${p.id}">${p.nama_periode}</option>`).join('');
+            document.getElementById('selectPeriode').innerHTML = '<option value="">Pilih Periode</option>' + opts;
+            document.getElementById('filterHasilPeriode').innerHTML = '<option value="">Pilih Periode</option>' + opts;
+        } catch(e) { console.log('Demo mode'); }
+    }
+    async function addPeriode() {
+        const nama = document.getElementById('namaPeriode').value; if(!nama) return;
+        try {
+            await fetch(API + '/penilaian/periode', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({nama_periode:nama}) });
+            document.getElementById('namaPeriode').value = ''; loadPeriode(); alert('Periode ditambahkan');
+        } catch(e) { alert('Periode ditambahkan (mode demo)'); document.getElementById('namaPeriode').value = ''; }
+    }
+    async function loadMapping() {
+        const idp = document.getElementById('selectPeriode').value; if(!idp) return;
+        currentPeriode = idp;
+        try {
+            const data = await fetch(API + '/penilaian/mapping/' + idp).then(r=>r.json());
+            document.getElementById('mappingTable').innerHTML = data.map(m=>`
+                <tr>
+                    <td>${m.nama_dinilai}</td><td>${m.nama_penilai}</td><td>${m.tipe_penilai}</td>
+                    <td><span class="badge ${m.status==='Selesai'?'badge-selesai':'badge-belum'}">${m.status}</span></td>
+                    <td>${m.status==='Belum' ? `<button class="btn btn-success btn-sm" onclick="openInputNilai(${m.id},'${m.nama_dinilai}','${m.nama_penilai}')">Input Nilai</button>` : ''}</td>
+                </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:24px;">Belum ada data mapping</td></tr>';
+        } catch(e) { console.log('Demo'); }
+    }
+    async function saveMapping() {
+        if(!currentPeriode) return alert('Pilih periode dulu!');
+        const data = { id_karyawan_dinilai: document.getElementById('mapDinilai').value, id_penilai: document.getElementById('mapPenilai').value, tipe_penilai: document.getElementById('mapTipe').value, id_periode: currentPeriode };
+        try {
+            const res = await fetch(API + '/penilaian/mapping', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) });
+            const json = await res.json(); alert(json.message); if(res.ok) { closeModal('modalMapping'); loadMapping(); }
+        } catch(e) { closeModal('modalMapping'); alert('Mapping disimpan (mode demo)'); }
+    }
+
+    function openInputNilai(id, dinilai, penilai) {
+        document.getElementById('idMappingNilai').value = id;
+        document.getElementById('infoPenilaian').innerText = `Penilai: ${penilai} — Menilai: ${dinilai}`;
+        openModal('modalNilai');
+    }
+    async function submitNilai() {
+        const id = document.getElementById('idMappingNilai').value;
+        const data = { nilai_amanah: document.getElementById('nilAmanah').value, nilai_kompeten: document.getElementById('nilKompeten').value, nilai_harmonis: document.getElementById('nilHarmonis').value, nilai_loyal: document.getElementById('nilLoyal').value, nilai_adaptif: document.getElementById('nilAdaptif').value, nilai_kolaboratif: document.getElementById('nilKolaboratif').value };
+        for(let key in data) if(!data[key] || data[key]<1 || data[key]>5) return alert('Nilai harus antara 1-5');
+        try {
+            await fetch(API + '/penilaian/submit-nilai/' + id, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) });
+        } catch(e) {}
+        alert('Nilai disimpan'); closeModal('modalNilai'); loadMapping();
+    }
+
+    // HASIL
+    async function calculateResult() {
+        const idp = document.getElementById('filterHasilPeriode').value; if(!idp) return alert('Pilih periode');
+        if(!confirm('Hitung nilai akhir untuk periode ini?')) return;
+        try {
+            const res = await fetch(API + '/penilaian/calculate/' + idp);
+            const json = await res.json(); alert(json.message);
+        } catch(e) { alert('Hasil dihitung (mode demo)'); }
+        loadHasil();
+    }
+    async function loadHasil() {
+        const idp = document.getElementById('filterHasilPeriode').value; if(!idp) return;
+        try {
+            const data = await fetch(API + '/penilaian/hasil/' + idp).then(r=>r.json());
+            const colors = ['c1','c2','c3','c4','c5'];
+            document.getElementById('hasilTable').innerHTML = data.map((h,i) => {
+                const init = h.nama_lengkap.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+                return `<tr>
+                    <td><div class="karyawan-cell"><div class="avatar-circle ${colors[i%5]}">${init}</div><div class="info"><div class="name">${h.nama_lengkap}</div></div></div></td>
+                    <td><div class="nilai-kpi-cell"><div class="val">${h.nilai_kpi||0}</div><div class="edit-link" onclick="openModalKPI(${h.id_karyawan},${idp},${h.nilai_kpi||0})">✏ Edit KPI</div></div></td>
+                    <td>${parseFloat(h.nilai_amanah||0).toFixed(1)}</td>
+                    <td><span class="nilai-akhir-big">${parseFloat(h.nilai_akhir).toFixed(2)}</span></td>
+                    <td><span class="badge badge-p1">${h.kategori}</span></td>
+                </tr>`;
+            }).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:24px;">Belum ada hasil. Klik Generate Hasil.</td></tr>';
+            if(data.length>0) {
+                const d = data[0];
+                if(radarChart) {
+                    radarChart.data.datasets[0].data = [d.nilai_amanah||0,d.nilai_kompeten||0,d.nilai_harmonis||0,d.nilai_loyal||0,d.nilai_adaptif||0,d.nilai_kolaboratif||0];
+                    radarChart.data.datasets[0].label = d.nama_lengkap;
+                    radarChart.update();
+                }
+            }
+        } catch(e) { console.log('Demo'); }
+    }
+    function openModalKPI(idKry, idPeriode, cur) {
+        document.getElementById('kpiIdKaryawan').value = idKry;
+        document.getElementById('kpiIdPeriode').value = idPeriode;
+        document.getElementById('kpiValue').value = cur;
+        openModal('modalKPI');
+    }
+    async function saveKPI() {
+        const idKry = document.getElementById('kpiIdKaryawan').value;
+        const idPeriode = document.getElementById('kpiIdPeriode').value;
+        const nilai = document.getElementById('kpiValue').value;
+        try {
+            await fetch(`${API}/penilaian/update-kpi/${idKry}/${idPeriode}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({nilai_kpi:nilai}) });
+        } catch(e) {}
+        alert('KPI disimpan'); closeModal('modalKPI'); loadHasil();
+    }
+
+    // IDP
+    async function loadIdp() {
+        try {
+            const data = await fetch(API + '/idp').then(r=>r.json());
+            const colors = ['c1','c2','c3','c4','c5'];
+            document.getElementById('idpTable').innerHTML = data.map((i,idx) => {
+                const init = i.nama_lengkap.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+                const sc = i.status==='Selesai'?'status-done': i.status==='Berlangsung'?'status-running':'status-planned';
+                return `<tr>
+                    <td><div class="karyawan-cell"><div class="avatar-circle ${colors[idx%5]}">${init}</div><div class="info"><div class="name">${i.nama_lengkap}</div></div></div></td>
+                    <td>${i.program_pengembangan}</td>
+                    <td><span class="status-chip ${sc}">${i.status||'Direncanakan'}</span></td>
+                    <td><div class="actions">
+                        <button class="btn btn-ghost btn-sm" onclick="updateIdpStatus(${i.id},'Berlangsung')">Start</button>
+                        <button class="btn btn-success btn-sm" onclick="updateIdpStatus(${i.id},'Selesai')">Done</button>
+                    </div></td>
+                </tr>`;
+            }).join('');
+        } catch(e) { console.log('Demo IDP'); }
+    }
+    async function saveIdp() {
+        const data = { id_karyawan: document.getElementById('idpKaryawan').value, program_pengembangan: document.getElementById('idpProgram').value };
+        if(!data.id_karyawan || !data.program_pengembangan) return alert('Lengkapi semua data');
+        try {
+            const res = await fetch(API + '/idp', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) });
+            const json = await res.json(); alert(json.message);
+        } catch(e) { alert('IDP disimpan (mode demo)'); }
+        closeModal('modalIdp'); loadIdp();
+    }
+    async function updateIdpStatus(id, status) {
+        try {
+            await fetch(API + '/idp/' + id, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({progress: status==='Selesai'?100:50, status}) });
+        } catch(e) {}
+        loadIdp();
+    }
+
+    // MODAL UTILS
+    function openModal(id) { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+    // Close on backdrop click
+    document.querySelectorAll('.modal-overlay').forEach(m => {
+        m.addEventListener('click', (e) => { if(e.target === m) m.classList.remove('active'); });
+    });
+
+    function initApp() {
+        loadMaster();
+        loadKaryawan();
+        loadPeriode();
+        loadIdp();
+    }
+
+    // Auto-show if logged in
+    showMainApp();
+</script>
+</body>
+</html>
